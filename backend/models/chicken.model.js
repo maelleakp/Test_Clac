@@ -20,6 +20,10 @@ const chickenSchema = mongoose.Schema(
         isRunning: {
             type: Boolean,
             default: false,
+        },
+        farmyardId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Farmyard"
         }
     }
 );

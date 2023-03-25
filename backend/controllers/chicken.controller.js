@@ -1,30 +1,33 @@
 const { findById, findByIdAndUpdate } = require('../models/chicken.model');
 const ChickenModel = require('../models/chicken.model');
+const FarmyardModel = require('../models/farmyard.model');
 
 // getChickens
-// Récupère tous les chicken de la base de données et les renvoie en réponse sous forme de tableau JSON.
+// Retrieve all chickens from the database and send them as a JSON array in response.
 module.exports.getChickens = async (req, res) => {
     const chickens = await ChickenModel.find();
-    res.status(200).json(chickens)
+    res.status(200).json(chickens);
 };
 
+
 // getChicken
-// Récupère un poulet spécifique en utilisant son ID et le renvoie en réponse sous forme de JSON.
+// Retrieve a specific chicken using its ID and send it as a JSON object in response.
 module.exports.getChickenById = async (req, res) => {
     const chicken = await ChickenModel.findById(req.params.id);
 
     if (!chicken) {
-        res.status(400).json({ message: "Ce chicken n'existe pas" })    
+        res.status(400).json({ message: "This chicken does not exist" });    
     }
 
-    res.status(200).json(chicken)
+    res.status(200).json(chicken);
 };
 
+
 // setChicken
-// Crée un nouveau chicken en utilisant les informations fournies dans le corps de la requête et les enregistre dans la base de données. 
+// Create a new chicken using the information provided in the request body and save it to the database.
 module.exports.setChickens = async (req, res) => {
     if (!req.body.name || !req.body.weight) {
-        res.status(400).json({ message : "Merci de renseigner un nom et un poids" });
+        res.status(400).json({ message : "Please provide a name and weight" });
     }
 
     const chicken = await ChickenModel.create({
@@ -37,44 +40,64 @@ module.exports.setChickens = async (req, res) => {
     res.status(200).json(chicken);
 };
 
+
 // editChicken
-// Modifie un poulet spécifique en utilisant son ID et les informations fournies dans le corps de la requête.
+// Modify a specific chicken using its ID and the information provided in the request body.
 module.exports.editChiken = async (req, res) => {
     const chicken = await ChickenModel.findById(req.params.id);
 
     if (!chicken) {
-        res.status(400).json({ message: "Ce chicken n'existe pas" })    
+        res.status(400).json({ message: "This chicken does not exist" });    
     }
     
     const updateChicken = await ChickenModel.findByIdAndUpdate(
         chicken,
         req.body,
-        {new: true,}
+        { new: true }
     );
     res.status(200).json(updateChicken);
 };
 
 // deleteChicken
-// Supprime un poulet spécifique en utilisant son ID. 
+// Delete a specific chicken using its ID.
 module.exports.deleteChicken = async (req, res) => {
     const chicken = await ChickenModel.findById(req.params.id);
 
     if (!chicken) {
-        res.status(400).json({ message: "Ce chicken n'existe pas" })    
+        res.status(400).json({ message: "This chicken does not exist" });    
     }
 
-    const deleteChicken = await ChickenModel.deleteOne({_id: req.params.id});
-    res.status(200).json("Chicken supprimé : " + req.params.id);
+    await ChickenModel.deleteOne({ _id: req.params.id });
+    res.status(200).json("Chicken deleted: " + req.params.id);
 };
 
+
 // runChicken
-// Incrémente la variable "steps" d'un poulet spécifique en utilisant son ID.
+// Increment the "steps" variable of a specific chicken using its ID.
 module.exports.runChiken = async (req, res) => {
     try {
         const chicken = await ChickenModel.findById(req.params.id);
         chicken.steps++;
         await chicken.save();
-        res.status(200).json({ message: `Variable steps augmentée à ${chicken.steps}` });
+        res.status(200).json({ message: `Steps variable incremented to ${chicken.steps}` });
+    } catch (err) {
+        res.status(400).json(err);
+    }
+};
+
+// linkChicken
+// Get farmyard for a specific chicken
+module.exports.linkChiken = async (req, res) => {
+    try {
+        const chicken = await ChickenModel.findById(req.params.id);
+        if (!chicken) {
+          res.status(400).json({ message: 'Chicken not found' });
+        }
+        const farmyard = await FarmyardModel.findById(chicken.farmyardId);
+        if (!farmyard) {
+          res.status(400).json({ message: 'Farmyard not found' });
+        }
+        res.status(200).json(farmyard);
     } catch (err) {
         res.status(400).json(err);
     }

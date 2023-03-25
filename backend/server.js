@@ -3,16 +3,16 @@ const connectDB = require("./config/db");
 const dotenv = require("dotenv").config();
 const port = 5000;
 
-// Connection à la DB
+// Connect to the database
 connectDB();
 
 const app = express();
 
-// Middleware qui permet de traiter les données de la Request
+// Middleware that allows processing of Request data
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/chicken", require("./routes/chicken.routes"));
 
-// Lancer le serveur
-app.listen(port, () => console.log("Le serveur a démarré au port " + port))
+// Start the server
+app.listen(port, () => console.log("Server started on port " + port));

@@ -5,7 +5,8 @@ const {
     getChickenById, 
     editChiken, 
     deleteChicken,
-    runChiken
+    runChiken,
+    linkChiken
 } = require('../controllers/chicken.controller');
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.post("/", setChickens);
 router.put("/:id", editChiken);
 router.delete("/:id", deleteChicken);
 router.patch("/run/:id", runChiken);
+router.get("/:id/farmyard", linkChiken);
 
 module.exports = router;
